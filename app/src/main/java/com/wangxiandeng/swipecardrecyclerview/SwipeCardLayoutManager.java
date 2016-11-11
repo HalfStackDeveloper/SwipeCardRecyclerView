@@ -27,13 +27,11 @@ public class SwipeCardLayoutManager extends RecyclerView.LayoutManager {
             int width = getDecoratedMeasuredWidth(child);
             int height = getDecoratedMeasuredHeight(child);
             layoutDecorated(child, 0, 0, width, height);
+            //缩放
             if (i < getItemCount() - 1) {
                 child.setScaleX(0.8f);
                 child.setScaleY(0.8f);
             }
         }
-        Log.e("Swipe", "onLayout");
-
-
     }
 }
