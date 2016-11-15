@@ -1,8 +1,13 @@
-package com.wangxiandeng.swipecardrecyclerview;
+package com.wangxiandeng.demo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+
+import com.wangxiandeng.swipecardrecyclerview.ItemRemovedListener;
+import com.wangxiandeng.swipecardrecyclerview.SwipeCardAdapter;
+import com.wangxiandeng.swipecardrecyclerview.SwipeCardLayoutManager;
+import com.wangxiandeng.swipecardrecyclerview.SwipeCardRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
