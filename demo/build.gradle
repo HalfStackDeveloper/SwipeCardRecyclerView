@@ -26,5 +26,5 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:24.2.0'
     testCompile 'junit:junit:4.12'
-    compile project(path: ':swipecardrecyclerview')
+    compile 'com.github.HalfStackDeveloper:SwipeCardRecyclerView:v1.0.1'
 }

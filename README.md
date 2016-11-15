@@ -14,7 +14,7 @@
 **2.在app build.gradle文件中添加依赖**
 
 	dependencies {
-	        compile 'com.github.HalfStackDeveloper:SwipeCardRecyclerView:v1.0.0'
+	        compile 'com.github.HalfStackDeveloper:SwipeCardRecyclerView:v1.0.1'
 	}
 
 ### 使用 (参见demo)
