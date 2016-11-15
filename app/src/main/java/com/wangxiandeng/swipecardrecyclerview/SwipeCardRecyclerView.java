@@ -1,5 +1,6 @@
 package com.wangxiandeng.swipecardrecyclerview;
 
+import android.animation.Animator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -92,6 +93,7 @@ public class SwipeCardRecyclerView extends RecyclerView {
 
     /**
      * 更新下一个View的宽高
+     *
      * @param factor
      */
     private void updateNextItem(double factor) {
@@ -107,7 +109,8 @@ public class SwipeCardRecyclerView extends RecyclerView {
     }
 
     /**
-     *手指抬起时触发动画
+     * 手指抬起时触发动画
+     *
      * @param view
      */
     private void touchUp(final View view) {
@@ -119,11 +122,11 @@ public class SwipeCardRecyclerView extends RecyclerView {
             targetY = mTopViewY;
         } else if (view.getX() - mTopViewX > mBorder) {
             del = true;
-            targetX = getScreenWidth()*2;
+            targetX = getScreenWidth() * 2;
             mRemovedListener.onRightRemoved();
         } else {
             del = true;
-            targetX = -view.getWidth()-getScreenWidth();
+            targetX = -view.getWidth() - getScreenWidth();
             mRemovedListener.onLeftRemoved();
         }
         View animView = view;
@@ -138,11 +141,36 @@ public class SwipeCardRecyclerView extends RecyclerView {
             interpolator = new OvershootInterpolator();
         }
         final boolean finalDel = del;
+        final View finalAnimView = animView;
         animView.animate()
                 .setDuration(500)
                 .x(targetX)
                 .y(targetY)
                 .setInterpolator(interpolator)
+                .setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if (finalDel) {
+                            try {
+                                mDecorView.removeView(finalAnimView);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                    }
+                })
                 .setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
@@ -162,6 +190,7 @@ public class SwipeCardRecyclerView extends RecyclerView {
 
     /**
      * 计算View退场时的纵坐标，简单的线性计算
+     *
      * @param x1
      * @param y1
      * @param x2
