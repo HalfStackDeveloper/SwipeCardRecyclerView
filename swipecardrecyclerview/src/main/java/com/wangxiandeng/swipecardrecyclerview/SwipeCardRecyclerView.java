@@ -12,10 +12,15 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
+import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by WangXiandeng on 2016/11/3.
@@ -24,6 +29,9 @@ import android.widget.ImageView;
 public class SwipeCardRecyclerView extends RecyclerView {
     private float mTopViewX;
     private float mTopViewY;
+
+    private float mTopViewOffsetX = 0;
+    private float mTopViewOffsetY = 0;
 
     private float mTouchDownX;
     private float mTouchDownY;
@@ -34,6 +42,9 @@ public class SwipeCardRecyclerView extends RecyclerView {
 
     private FrameLayout mDecorView;
     private int[] mDecorViewLocation = new int[2];
+
+
+    private Map<View, Animator> mAnimatorMap;
 
 
     public SwipeCardRecyclerView(Context context) {
@@ -54,6 +65,7 @@ public class SwipeCardRecyclerView extends RecyclerView {
     private void initView() {
         mDecorView = (FrameLayout) ((Activity) getContext()).getWindow().getDecorView();
         mDecorView.getLocationOnScreen(mDecorViewLocation);
+        mAnimatorMap = new HashMap<>();
     }
 
     public void setRemovedListener(ItemRemovedListener listener) {
@@ -70,16 +82,25 @@ public class SwipeCardRecyclerView extends RecyclerView {
         float touchY = e.getY();
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mTopViewX = topView.getX();
-                mTopViewY = topView.getY();
+                if (mAnimatorMap.containsKey(topView)) {
+                    mAnimatorMap.get(topView).cancel();
+                    mAnimatorMap.remove(topView);
+                    mTopViewOffsetX = topView.getX();
+                    mTopViewOffsetY = topView.getY();
+                } else {
+                    mTopViewX = topView.getX();
+                    mTopViewY = topView.getY();
+                    mTopViewOffsetX = 0;
+                    mTopViewOffsetY = 0;
+                }
                 mTouchDownX = touchX;
                 mTouchDownY = touchY;
                 break;
             case MotionEvent.ACTION_MOVE:
                 float dx = touchX - mTouchDownX;
                 float dy = touchY - mTouchDownY;
-                topView.setX(mTopViewX + dx);
-                topView.setY(mTopViewY + dy);
+                topView.setX(mTopViewX + dx + mTopViewOffsetX);
+                topView.setY(mTopViewY + dy + mTopViewOffsetY);
                 updateNextItem(Math.abs(topView.getX() - mTopViewX) * 0.2 / mBorder + 0.8);
                 break;
             case MotionEvent.ACTION_UP:
@@ -130,7 +151,7 @@ public class SwipeCardRecyclerView extends RecyclerView {
             mRemovedListener.onLeftRemoved();
         }
         View animView = view;
-        TimeInterpolator interpolator = null;
+        TimeInterpolator interpolator;
         if (del) {
             animView = getMirrorView(view);
             float offsetX = getX() - mDecorView.getX();
@@ -150,6 +171,9 @@ public class SwipeCardRecyclerView extends RecyclerView {
                 .setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
+                        if (!finalDel) {
+                            mAnimatorMap.put(finalAnimView, animation);
+                        }
                     }
 
                     @Override
@@ -160,6 +184,8 @@ public class SwipeCardRecyclerView extends RecyclerView {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        } else {
+                            mAnimatorMap.remove(finalAnimView);
                         }
                     }
 
@@ -231,5 +257,4 @@ public class SwipeCardRecyclerView extends RecyclerView {
         mDecorView.addView(mirrorView, params);
         return mirrorView;
     }
-
 }

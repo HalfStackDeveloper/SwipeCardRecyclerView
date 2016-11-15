@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.wangxiandeng.swipecardrecyclerview.ItemRemovedListener;
-import com.wangxiandeng.swipecardrecyclerview.SwipeCardAdapter;
 import com.wangxiandeng.swipecardrecyclerview.SwipeCardLayoutManager;
 import com.wangxiandeng.swipecardrecyclerview.SwipeCardRecyclerView;
 
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private SwipeCardRecyclerView mRecyclerView;
-    private SwipeCardAdapter mAdapter;
+    private MyAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 10; i++) {
             list.add(String.valueOf(i));
         }
-        mAdapter = new SwipeCardAdapter(this, list);
+        mAdapter = new MyAdapter(this, list);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setRemovedListener(new ItemRemovedListener() {
             @Override
